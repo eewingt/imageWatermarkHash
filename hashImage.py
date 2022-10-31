@@ -3,6 +3,9 @@ import hashlib
 from PIL import Image
 import glob
 import numpy as np
+#provide a dialog to choose directory.
+import tkinter as tk
+from tkinter import filedialog
 
 #test md5 hash
 """
@@ -11,13 +14,18 @@ md5hash2 = hashlib.md5(Image.open('watermarkingimage\capture2.jpg').tobytes())
 print(md5hash.hexdigest())
 print(md5hash2.hexdigest())
 """
+#Create a dialog box to open the directory
+root = tk.Tk()
+root.withdraw()
+file_path = filedialog.askdirectory()
+print(glob.glob(file_path))
 
 ### hash images in folder and store in CSV
 image_list = []
 list_rows = []
 file_name = []
 
-for filename in glob.glob('watermarkingimage\*'):
+for filename in glob.glob(file_path+'/*.*'):
     im = Image.open(filename).tobytes()
     image_list.append(im)
     file_name = filename
