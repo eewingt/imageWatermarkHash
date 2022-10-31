@@ -1,39 +1,35 @@
-## apply watermark for 1 image
-
+#watermark multiple images in a folder.
 import cv2
-"""
-#provide a dialog to choose directory.
-from tkinter import Tk     # from tkinter import Tk for Python 3.x
-from tkinter.filedialog import askopenfilename
+import glob
+import os
 
+#specifying your signature image
+logo = cv2.imread('signature.png')
+h_logo,w_logo, _ = logo.shape
 
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-filedir = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-print(filedir)
-"""
+#specify path
+images_path = glob.glob('watermarkingimage/*.*')
+print(images_path)
 
-# open an image using opencv
-imgOriginal = cv2.imread('watermarkingimage\Capture.png')
-img = imgOriginal
-#img = cv2.resize(imgOriginal, (640, 304))  - resizing an image will determine a default size for all images.
+for img_path in images_path:
+    img = cv2.imread(img_path)
+    h_img, w_img, _ = img.shape
 
-cv2.imshow('Boehringer Ingelheim', img)
+    # Get the center of the original. It's the location where we will place the watermark
+    center_y = int(h_img / 2)
+    center_x = int(w_img / 2)
+    top_y = center_y - int(h_logo / 2)
+    left_x = center_x - int(w_logo / 2)
+    bottom_y = top_y + h_logo
+    right_x = left_x + w_logo
 
-# get image height and width
-height, width, channels = img.shape
+    # Get ROI
+    roi = img[top_y: bottom_y, left_x: right_x]
+    # Add the Logo to the Roi
+    result = cv2.addWeighted(roi, 1, logo, 0.3, 0)
+    # Replace the ROI on the image
+    img[top_y: bottom_y, left_x: right_x] = result
 
-# add watermark
-blue = (255, 0, 0)
-position = (width - 300, height - 25)
-font = cv2.FONT_HERSHEY_COMPLEX_SMALL
-cv2.putText(img, "Boehringer Ingelheim",
-    position, font, 0.7, blue, 1)
-
-cv2.imshow('Boehringer Ingelheim', img)
-
-# save image using opencv
-cv2.imwrite('watermarkingimage\capture2.jpg', img)
-
-# key controller
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    # Get filename and save the image
+    filename = os.path.basename(img_path)
+    cv2.imwrite("watermarkingimage/watermarked_" + filename, img)
