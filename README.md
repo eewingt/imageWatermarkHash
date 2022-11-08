@@ -10,3 +10,6 @@ Please see the full detailed guide here: https://www.thepythoncode.com/code/hide
 
 watermark.py:
 Use to watermark multiple images in a folder for copyright purposes.
+
+VideoWatermark.py
+Watermark multiple videos within a specified folder.
